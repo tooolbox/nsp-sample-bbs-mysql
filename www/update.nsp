@@ -1,0 +1,52 @@
+<% include('layout/top.nsp'); %>
+
+	<%
+		var mysql = require('mysql');
+		var connection = mysql.createConnection({
+			host : 'localhost',
+			user : 'nsp-sample-bbs',
+			password : 'test',
+			database : 'nsp-sample-bbs'
+		});
+		connection.connect();
+		
+		var data = self.params;
+		var id = data.id;
+		delete data.id;
+		
+		var isNew = false;
+			
+		var isNotEmpty = function(str) {
+			return str !== undefined && str !== '';
+		};
+		
+		if (
+		self.method === 'POST' &&
+		isNotEmpty(data.title) === true &&
+		isNotEmpty(data.content) === true) {
+			
+			connection.query('UPDATE article SET title=\'' + data.title + '\', content=\'' + data.content + '\' WHERE id=\'' + id + '\'', function(error, result) {
+				if (error === null) {
+					redirect('view?id=' + id);
+					resume();
+				}
+			});
+		}
+		
+		else {
+			connection.query('SELECT * FROM article WHERE id=\'' + id + '\'', function(error, rows) {
+				if (error === null) {
+					data = rows[0];
+					resume();
+				}
+			});
+		}
+		
+		connection.end();
+		pause();
+	%>
+
+	<h3>글 수정</h3>
+	<% include('form.nsp'); %>
+	
+<% include('layout/bottom.nsp'); %>

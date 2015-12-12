@@ -1,14 +1,36 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-		<title>NSP BBS Sample</title>
-	</head>
-	<body>
-		<h1>NSP BBS Sample</h1>
-		<p>
-			
-		</p>
-	</body>
-</html>
+<% include('layout/top.nsp'); %>
+
+	<%
+		var mysql = require('mysql');
+		var connection = mysql.createConnection({
+			host : 'localhost',
+			user : 'nsp-sample-bbs',
+			password : 'test',
+			database : 'nsp-sample-bbs'
+		});
+		connection.connect();
+		
+		var dataSet;
+		
+		connection.query('SELECT * FROM article', function(error, rows) {
+			if (error === null) {
+				dataSet = rows;
+				resume();
+			}
+		});
+		
+		connection.end();
+		pause();
+	%>
+
+	<a class="btn btn-primary" href="write">글 작성</a>
+	<h3>글 목록</h3>
+	<table class="table table-striped">
+		<~ dataSet -> data >
+			<tr>
+				<td><a href="view?id={{data.id}}">{{data.title}}</a></td>
+			</tr>
+		</~>
+	</table>
+	
+<% include('layout/bottom.nsp'); %>

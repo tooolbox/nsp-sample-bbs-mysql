@@ -1,0 +1,34 @@
+<% include('layout/top.nsp'); %>
+
+	<%
+		var mysql = require('mysql');
+		var connection = mysql.createConnection({
+			host : 'localhost',
+			user : 'nsp-sample-bbs',
+			password : 'test',
+			database : 'nsp-sample-bbs'
+		});
+		connection.connect();
+		
+		var data = {};
+		
+		connection.query('SELECT * FROM article WHERE id=\'' + self.params.id + '\'', function(error, rows) {
+			if (error === null) {
+				data = rows[0];
+				resume();
+			}
+		});
+		
+		connection.end();
+		pause();
+	%>
+
+	<a class="btn btn-primary" href="index">글 목록</a>
+	<h3>{{data.title}}</h3>
+	<p>
+		{{data.content}}
+	</p>
+	<a class="btn btn-default" href="update?id={{data.id}}">글 수정</a>
+	<a class="btn btn-danger" href="remove?id={{data.id}}">글 삭제</a>
+	
+<% include('layout/bottom.nsp'); %>

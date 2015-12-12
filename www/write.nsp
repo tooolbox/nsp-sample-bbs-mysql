@@ -1,0 +1,40 @@
+<% include('layout/top.nsp'); %>
+
+	<%
+		var mysql = require('mysql');
+		var connection = mysql.createConnection({
+			host : 'localhost',
+			user : 'nsp-sample-bbs',
+			password : 'test',
+			database : 'nsp-sample-bbs'
+		});
+		connection.connect();
+		
+		var data = self.params;
+		var isNew = true;
+		
+		var isNotEmpty = function(str) {
+			return str !== undefined && str !== '';
+		};
+		
+		if (
+		self.method === 'POST' &&
+		isNotEmpty(data.title) === true &&
+		isNotEmpty(data.content) === true) {
+			
+			connection.query('INSERT INTO article (title, content) VALUES (\'' + data.title + '\', \'' + data.content + '\')', function(error, result) {
+				if (error === null) {
+					redirect('view?id=' + result.insertId);
+					resume();
+				}
+			});
+			
+			connection.end();
+			pause();
+		}
+	%>
+
+	<h3>글 작성</h3>
+	<% include('form.nsp'); %>
+	
+<% include('layout/bottom.nsp'); %>
