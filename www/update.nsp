@@ -1,14 +1,7 @@
 <% include('layout/top.nsp'); %>
 
 	<%
-		var mysql = require('mysql');
-		var connection = mysql.createConnection({
-			host : 'localhost',
-			user : 'nsp-sample-bbs',
-			password : 'test',
-			database : 'nsp-sample-bbs'
-		});
-		connection.connect();
+		var pool = require('./connection-pool');
 		
 		var data = self.params;
 		var id = data.id;
@@ -25,16 +18,15 @@
 		isNotEmpty(data.title) === true &&
 		isNotEmpty(data.content) === true) {
 			
-			connection.query('UPDATE article SET title=\'' + data.title + '\', content=\'' + data.content + '\' WHERE id=\'' + id + '\'', function(error, result) {
+			pool.query('UPDATE article SET title=\'' + data.title + '\', content=\'' + data.content + '\' WHERE id=\'' + id + '\'', function(error, result) {
 				if (error === null) {
 					redirect('view?id=' + id);
-					resume();
 				}
 			});
 		}
 		
 		else {
-			connection.query('SELECT * FROM article WHERE id=\'' + id + '\'', function(error, rows) {
+			pool.query('SELECT * FROM article WHERE id=\'' + id + '\'', function(error, rows) {
 				if (error === null) {
 					data = rows[0];
 					resume();
@@ -42,11 +34,29 @@
 			});
 		}
 		
-		connection.end();
 		pause();
 	%>
 
 	<h3>글 수정</h3>
-	<% include('form.nsp'); %>
+	<form action="{{isNew === true ? 'write' : 'update'}}" method="POST">
+		<? isNew !== true >
+			<input type="hidden" name="id" value="{{id}}">
+		</?>
+		<div class="form-group {{data.title === '' ? 'has-error' : ''}}">
+			<label class="control-label" for="write-form-title">글 제목</label>
+			<input type="text" class="form-control" id="write-form-title" placeholder="글 제목을 입력해주세요." name="title" value="{{data.title}}">
+			<? data.title === '' >
+				<span class="help-block">글 제목을 입력해주시기 바랍니다.</span>
+			</?>
+		</div>
+		<div class="form-group {{data.content === '' ? 'has-error' : ''}}">
+			<label class="control-label" for="write-form-content">글 내용</label>
+			<textarea class="form-control" id="write-form-content" name="content" rows="8">{{data.content}}</textarea>
+			<? data.content === '' >
+				<span class="help-block">글 내용을 입력해주시기 바랍니다.</span>
+			</?>
+		</div>
+		<button type="submit" class="btn btn-primary">작성완료</button>
+	</form>
 	
 <% include('layout/bottom.nsp'); %>

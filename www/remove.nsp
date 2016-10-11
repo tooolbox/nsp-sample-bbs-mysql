@@ -1,27 +1,18 @@
 <% include('layout/top.nsp'); %>
 
 	<%
-		var mysql = require('mysql');
-		var connection = mysql.createConnection({
-			host : 'localhost',
-			user : 'nsp-sample-bbs',
-			password : 'test',
-			database : 'nsp-sample-bbs'
-		});
-		connection.connect();
+		var pool = require('./connection-pool');
 		
 		var id = self.params.id;
 		
 		if (self.method === 'POST') {
 			
-			connection.query('DELETE FROM article WHERE id=\'' + id + '\'', function(error, result) {
+			pool.query('DELETE FROM article WHERE id=\'' + id + '\'', function(error, result) {
 				if (error === null) {
 					redirect('index');
-					resume();
 				}
 			});
 			
-			connection.end();
 			pause();
 		}
 	%>
