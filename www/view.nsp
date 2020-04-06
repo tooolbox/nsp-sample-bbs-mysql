@@ -15,12 +15,12 @@
 		pause();
 	%>
 
-	<a class="btn btn-primary" href="index">글 목록</a>
+	<a class="btn btn-primary" href="index">View Listing</a>
 	<h3>{{data.title}}</h3>
 	<p>
 		{{data.content}}
 	</p>
-	<a class="btn btn-default" href="update?id={{data.id}}">글 수정</a>
-	<a class="btn btn-danger" href="remove?id={{data.id}}">글 삭제</a>
+	<a class="btn btn-default" href="update?id={{data.id}}">Edit</a>
+	<a class="btn btn-danger" href="remove?id={{data.id}}">Delete Post</a>
 	
 <% include('layout/bottom.nsp'); %>

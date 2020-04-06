@@ -15,8 +15,8 @@
 		pause();
 	%>
 
-	<a class="btn btn-primary" href="write">글 작성</a>
-	<h3>글 목록</h3>
+	<a class="btn btn-primary" href="write">Write</a>
+	<h3>Article list</h3>
 	<table class="table table-striped">
 		<~ dataSet -> data >
 			<tr>
